@@ -213,7 +213,7 @@ results = []
 
 for model_name, y_pred in models.items():
     accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred, average='weighted')  # Use 'binary' if 2 classes
+    precision = precision_score(y_test, y_pred, average='weighted')
     recall = recall_score(y_test, y_pred, average='weighted')
     f1 = f1_score(y_test, y_pred, average='weighted')
 
@@ -289,34 +289,36 @@ ax2.set_ylabel('Frequency')
 plt.tight_layout()
 plt.show()
 
+# Accuracy values for plotting
+labels = results_df.set_index('Model')['Accuracy']
+
 plt.figure(figsize=(15, 9))
 plt.title('Comparing Accuracy of ML Models', fontsize=20, pad=20)
 
-# Pastel color scheme
-pastel_colors = ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#E0BBE4']
+pastel_colors = ['#FFB3BA', '#FFDFBA', '#FFFFBA',
+                 '#BAFFC9', '#BAE1FF', '#E0BBE4']
 
-plt.xticks(fontsize=12, color='black', rotation=45 if len(labels) > 5 else 0)
-plt.yticks(fontsize=12, color='black')
-plt.ylabel('Accuracy', fontsize=16)
+bars = plt.bar(
+    labels.index,
+    labels.values,
+    color=pastel_colors[:len(labels)],
+    edgecolor='black',
+    linewidth=1.5,
+    alpha=0.8
+)
+
 plt.xlabel('Models', fontsize=16)
+plt.ylabel('Accuracy', fontsize=16)
+plt.ylim(0, 1.0)
+plt.yticks(np.arange(0, 1.1, 0.1))
+plt.xticks(rotation=45 if len(labels) > 5 else 0)
 
-# Create the bar plot
-bars = plt.bar(labels.keys(), labels.values(), edgecolor='black', color=pastel_colors,
-               linewidth=1.5, alpha=0.8)
-
-# Add value labels on top of bars
 for bar in bars:
-    height = bar.get_height()
-    plt.text(bar.get_x() + bar.get_width()/2., height + 0.01,
-             f'{height:.3f}', ha='center', va='bottom', fontsize=11)
+    h = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2, h + 0.01, f'{h:.3f}',
+             ha='center', va='bottom', fontsize=11)
 
-# Improve y-axis to show more detailed ticks
-plt.ylim(0, 1.0)  # Set y-axis from 0 to 1 for accuracy
-plt.yticks(np.arange(0, 1.1, 0.1))  # Detailed ticks every 0.1
-
-# Add grid for better readability
-plt.grid(axis='y', alpha=0.3, linestyle='--')
-
+plt.grid(axis='y', linestyle='--', alpha=0.3)
 plt.tight_layout()
 plt.show()
 
